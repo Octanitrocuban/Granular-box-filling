@@ -17,10 +17,17 @@ The list of functions and their purpose:
   
 
 a1, b1, c = GranularFilling
+
 a2, b2 = GranularFilling
+
 ShowBox(a1, b1)
+
 RepartGrains(b1)
+
 ShowTrying(c)
 
+
+
 ShowBox(a2, b2)
+
 RepartGrains(b2)
