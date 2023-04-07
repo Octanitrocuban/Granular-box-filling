@@ -16,18 +16,28 @@ The list of functions and their purpose:
     CompacGranular: A more compact method to fill a box with circular particules of random rays.
   
 
-a1, b1, c = GranularFilling
+a1, b1, c1 = GranularFilling(1000, [50, 400], 0.005, 'uniform', verbose=True)
 
-a2, b2 = GranularFilling
+a2, b2, c2 = GranularFilling(1000, [50, 400], 0.005, 'lrqc', verbose=True)
+
+a3, b3 = CompacGranular(1000, [50, 400], verbose=True)
 
 ShowBox(a1, b1)
 
 RepartGrains(b1)
 
-ShowTrying(c)
+ShowTrying(c1)
 
 
 
-ShowBox(a2, b2)
+ShowBox(a1, b1)
 
-RepartGrains(b2)
+RepartGrains(b1)
+
+ShowTrying(c1)
+
+
+
+ShowBox(a3, b3)
+
+RepartGrains(b3)
