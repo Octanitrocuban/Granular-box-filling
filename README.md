@@ -3,56 +3,56 @@ Simulation of the random filling of a box with grains of variable size
 
 The list of functions and their purpose:
 
-    ShowBox: function to show the box filled with grains.
+    show_box: function to show the box filled with grains.
   
-    RepartGrains: Function to calculate (and plot if asked) the distribution of the grains put into the box.
+    repart_grains: Function to calculate (and plot if asked) the distribution of the grains put into the box.
   
-    ShowTrying: Function to show the evolution of the sucess/try ratio.
+    show_trying: Function to show the evolution of the sucess/try ratio.
   
-    GranularFilling: Function to randomly fill a blank space with granular particules.
+    granular_filling: Function to randomly fill a blank space with granular particules.
   
-    DictioRangeRay: Function to create a dictionnarie of the relative positions of the bordure point of a dissk of ray n.
+    dictio_range_ray: Function to create a dictionnarie of the relative positions of the bordure point of a dissk of ray n.
   
-    CompacGranular: A more compact method to fill a box with circular particules of random rays.
+    compac_granular: A more compact method to fill a box with circular particules of random rays.
   
 
-a1, b1, c1 = GranularFilling(1000, [50, 400], 0.005, 'uniform', verbose=True)
+a1, b1, c1 = granular_filling(1000, [50, 400], 0.005, 'uniform', verbose=True)
 
-a2, b2, c2 = GranularFilling(1000, [50, 400], 0.005, 'lrqc', verbose=True)
+a2, b2, c2 = granular_filling(1000, [50, 400], 0.005, 'lrqc', verbose=True)
 
-a3, b3 = CompacGranular(1000, [50, 400], verbose=True)
+a3, b3 = compac_granular(1000, [50, 400], verbose=True)
 
-ShowBox(a1, b1)
+show_box(a1, b1)
 
 ![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_uniform.png)
 
-RepartGrains(b1)
+repart_grains(b1)
 
 ![Exemple picture](GrainsDistri_s1000_rr_50_400_rp_0,005_uniform.png)
 
-ShowTrying(c1)
+show_trying(c1)
 
 ![Exemple picture](Trying_s1000_rr_50_400_rp_0,005_uniform.png)
 
 
-ShowBox(a2, b2)
+show_box(a2, b2)
 
 ![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_lrqc.png)
 
-RepartGrains(b2)
+repart_grains(b2)
 
 ![Exemple picture](GrainsDistri_s1000_rr_50_400_rp_0,005_lrqc.png)
 
-ShowTrying(c2)
+show_trying(c2)
 
 ![Exemple picture](Trying_s1000_rr_50_400_rp_0,005_lrqc.png)
 
 
 
-ShowBox(a3, b3)
+show_box(a3, b3)
 
 ![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_compact.png)
 
-RepartGrains(b3)
+repart_grains(b3)
 
 ![Exemple picture](GrainsDistri_s1000_rr_50_400_compact.png)
