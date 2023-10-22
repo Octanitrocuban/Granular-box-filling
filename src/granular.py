@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 29 21:11:42 2023
-
 @author: Matthieu Nougaret
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-
-
-def ShowBox(box, grains=None):
+from scipy.spatial.distance import cdist
+#=============================================================================
+def show_box(box, grains=None):
 	"""
 	Function to show the box filled with grains.
 
@@ -37,7 +35,7 @@ def ShowBox(box, grains=None):
 
 	plt.show()
 
-def RepartGrains(grains, Plot=True):
+def repart_grains(grains, plot=True):
 	"""
 	Function to calculate (and plot if asked) the distribution of the grains
 	put into the box.
@@ -47,7 +45,7 @@ def RepartGrains(grains, Plot=True):
 	grains : numpy.ndarray
 		A 2-dimensional array that store the list of the grains putted into
 		the box.
-	Plot : bool, optional
+	plot : bool, optional
 		Indicate if we want to plot the distribution. The default is True.
 
 	Returns
@@ -60,7 +58,7 @@ def RepartGrains(grains, Plot=True):
 
 	"""
 	values, counts = np.unique(grains[:, 0], return_counts=True)
-	if Plot:
+	if plot:
 		plt.figure()
 		plt.title('Ray distribution')
 		plt.vlines(values, 0, counts, lw=5)
@@ -68,9 +66,10 @@ def RepartGrains(grains, Plot=True):
 		plt.ylabel('Count')
 		plt.ylim(0)
 		plt.show()
+
 	return values, counts
 
-def ShowTrying(trying):
+def show_trying(trying):
 	"""
 	Function to show the evolution of the sucess/try ratio.
 
@@ -92,15 +91,15 @@ def ShowTrying(trying):
 	plt.xlim(-len(trying)*0.02, len(trying)+len(trying)*0.02)
 	plt.show()
 
-def GranularFilling(Size, RayRange, ratio, method, verbose=True):
+def granular_filling(size, ray_range, ratio, method, verbose=True):
 	"""
 	Function to randomly fill a blank space with granular particules.
 
 	Parameters
 	----------
-	Size : int
+	size : int
 		Size of the plate to fill.
-	RayRange : list
+	ray_range : list
 		Limites rays size.
 	ratio : float
 		Try over win ratio.
@@ -111,7 +110,7 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 
 	Returns
 	-------
-	Plate : numpy.ndarray
+	plate : numpy.ndarray
 		A 2d array of the filled box. The 1-infinite values indicate the
 		pixels tooked by the i-th grain.
 	disques : numpy.ndarray
@@ -122,7 +121,7 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 
 	Exemple
 	-------
-	In[0] : GranularFilling(19, [4, 6], 0.001, 'uniform')
+	In[0] : granular_filling(19, [4, 6], 0.001, 'uniform')
 	Out[0] : array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 					[0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
 					[0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0],
@@ -158,22 +157,24 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 	if verbose:
 		print('Please wait while filling the tray, this may take a few '+
 			  'moments to several tens of minutes...')
+
 	# Create the box to fill
-	Plate = np.zeros((Size, Size))
+	plate = np.zeros((size, size))
 	# Range of the possible rays
-	Dr = RayRange[1]-RayRange[0]
+	delta_r = ray_range[1]-ray_range[0]
 	# Number of trial, start at 1 to avoid 0-division
 	t = 1
 	# Creating all the possible coordinates
-	Yy, Xx = np.meshgrid(np.arange(0, Size, 1.),
-						 np.arange(0, Size, 1.))
+	y_grid, x_grid = np.meshgrid(np.arange(0, size, 1.),
+								 np.arange(0, size, 1.))
+	grid_coord = np.array([x_grid, y_grid]).T
 	# Evolution of the ratio number of succeful trial over the total number of
 	# trial
 	tent = []
 	# Lists of grains and their parameters
 	disques = []
 	# Parameter to stop the while loop
-	Stop = False
+	stop = False
 	# Number of successful trial, start at 1 to avoid 0-division
 	c = 1
 	# Integer that count the number of time that there aren't any possible
@@ -182,58 +183,60 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 	if verbose:
 		pbar = tqdm(total=1, desc='progression')
 
-	while Stop != True:
+	while stop != True:
 		# Method to draw rays following an exponentional law where the
 		# probability increase with the size of the ray.
 		if method == 'lrqc':
 			# Ray exentent
-			n = RayRange[1]-RayRange[0]+1
+			n = ray_range[1]-ray_range[0]+1
 			# Range of ray
-			Xs = np.arange(RayRange[0]-1, RayRange[1]+1)
+			x_range = np.arange(ray_range[0]-1, ray_range[1]+1)
 			# Degree angle for the approximation of the exonentional law
-			degre = np.arccos((Xs-RayRange[0]-1)/n)
-			rayRang = np.cos(degre)*n+RayRange[0]-1
+			degre = np.arccos((x_range-ray_range[0]-1)/n)
+			ray_rang_cos = np.cos(degre)*n+ray_range[0]-1
 			# Probability density function
-			pdf = np.sin(np.pi+degre)*RayRange[1]+RayRange[1]
-			rayRang = rayRang[1:].astype(int)
+			pdf = np.sin(np.pi+degre)*ray_range[1]+ray_range[1]
+			ray_rang_cos = ray_rang_cos[1:].astype(int)
 			pdf = pdf[1:]
 			pdf = pdf/np.sum(pdf)
 			# Drawing the rays
-			Ray = np.random.choice(rayRang, size=1, replace=False, p=pdf)[0]
+			ray = np.random.choice(ray_rang_cos, size=1, replace=False, p=pdf)[0]
 
 		# Method to draw uniform rays
 		elif method == 'uniform':
-			Ray = np.random.randint(RayRange[0], RayRange[1]+1)
+			ray = np.random.randint(ray_range[0], ray_range[1]+1)
 
 		# Looking the position where we can put the grain
-		Pz = np.argwhere(Plate == 0)
-		Pz = Pz[(Pz[:, 0] >= Ray)&(Pz[:, 1] >= Ray)&
-				(Pz[:, 0] < Size-Ray)&(Pz[:, 1] < Size-Ray)]
+		psz = np.argwhere(plate == 0)
+		psz = psz[(psz[:, 0] >= ray)&(psz[:, 1] >= ray)&
+				  (psz[:, 0] < size-ray)&(psz[:, 1] < size-ray)]
+
 		# Trick to ease the calculation of the position of the grain
-		diag = int((Ray**2/2)**.5)
-		kernel = np.array([[[0, Ray]], [[Ray, 0]], [[0, -Ray]], [[-Ray, 0]],
+		diag = int((ray**2/2)**.5)
+		kernel = np.array([[[0, ray]], [[ray, 0]], [[0, -ray]], [[-ray, 0]],
 						   [[diag, diag]], [[-diag, diag]], [[diag, -diag]],
 						   [[-diag, -diag]]])
-		Projec = Pz+kernel
-		cond1 = Plate[Projec[0, :, 0], Projec[0, :, 1]] == 0
-		cond2 = Plate[Projec[1, :, 0], Projec[1, :, 1]] == 0
-		cond3 = Plate[Projec[2, :, 0], Projec[2, :, 1]] == 0
-		cond4 = Plate[Projec[3, :, 0], Projec[3, :, 1]] == 0
-		cond5 = Plate[Projec[4, :, 0], Projec[4, :, 1]] == 0
-		cond6 = Plate[Projec[5, :, 0], Projec[5, :, 1]] == 0
-		cond7 = Plate[Projec[6, :, 0], Projec[6, :, 1]] == 0
-		cond8 = Plate[Projec[7, :, 0], Projec[7, :, 1]] == 0
-		Pz = Pz[cond1&cond2&cond3&cond4&cond5&cond6&cond7&cond8]
+
+		Projec = psz+kernel
+		cond1 = plate[Projec[0, :, 0], Projec[0, :, 1]] == 0
+		cond2 = plate[Projec[1, :, 0], Projec[1, :, 1]] == 0
+		cond3 = plate[Projec[2, :, 0], Projec[2, :, 1]] == 0
+		cond4 = plate[Projec[3, :, 0], Projec[3, :, 1]] == 0
+		cond5 = plate[Projec[4, :, 0], Projec[4, :, 1]] == 0
+		cond6 = plate[Projec[5, :, 0], Projec[5, :, 1]] == 0
+		cond7 = plate[Projec[6, :, 0], Projec[6, :, 1]] == 0
+		cond8 = plate[Projec[7, :, 0], Projec[7, :, 1]] == 0
+		psz = psz[cond1&cond2&cond3&cond4&cond5&cond6&cond7&cond8]
 		# This mean that there are at least one position where the grain can
 		# be put
-		if len(Pz) > 0:
+		if len(psz) > 0:
 			# Random position
-			x, y = Pz[np.random.randint(len(Pz))]
-			Dist = ((Xx-x)**2+(Yy-y)**2)**.5
+			x, y = psz[np.random.randint(len(psz))]
+			dist = cdist(grid_coord, np.array([[x, y]])) # ((Xx-x)**2+(Yy-y)**2)**.5
 			# This mean that the random position is available
-			if np.sum(Plate[Dist <= Ray]) == 0:
-				Plate[Dist <= Ray] = c
-				disques.append([Ray, x, y])
+			if np.sum(plate[dist <= ray]) == 0:
+				plate[dist <= ray] = c
+				disques.append([ray, x, y])
 				# +1 for the succesfull trial
 				c += 1
 
@@ -242,17 +245,17 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 			tent.append(c/t)
 			# An early stopping
 			if tent[-1] <= ratio:
-				Stop = True
+				stop = True
 				break
 
 		# If there aren't any possible position for the grain due to its size
 		else:
 			toobig += 1
-			RayRange[1] = RayRange[1]-1
+			ray_range[1] = ray_range[1]-1
 			# an early stoping for when there aren't any possible position for
 			# any grain size
-			if toobig > Dr:
-				Stop = True
+			if toobig > delta_r:
+				stop = True
 				break
 
 		if verbose:
@@ -261,36 +264,36 @@ def GranularFilling(Size, RayRange, ratio, method, verbose=True):
 	if verbose:
 		pbar.close()
 
-	Plate = Plate.astype(int)
+	plate = plate.astype(int)
 	disques = np.array(disques)
 	tent = np.array(tent)
 	if verbose:
-		print('The table is filled to '+str(len(Plate[Plate > 0])/Size**2*100)+
-		  '%. There is/are '+str(len(Disques))+' grains.')
+		print('The table is filled to '+str(len(plate[plate > 0])/size**2*100)+
+		  '%. There is/are '+str(len(disques))+' grains.')
 
-	return Plate, disques, tent
+	return plate, disques, tent
 
-def DictioRangeRay(Size, RayRange):
+def dictio_range_ray(size, ray_range):
 	"""
 	Function to create a dictionnarie of the relative positions of the bordure
 	point of a dissk of ray n.
 
 	Parameters
 	----------
-	Size : int
+	size : int
 		Size of the plate to fill.
-	RayRange : list
+	ray_range : list
 		Upper and lower limits rays size.
 
 	Returns
 	-------
-	DispRay : dict
+	disp_ray : dict
 		Dictionaries that countain the relative positions of the bordure point
 		of a dissk of ray n.
 
 	Exemple
 	-------
-	In[0] : DictioRangeRay(19, [4, 6])
+	In[0] : dictio_range_ray(19, [4, 6])
 	Out[0] : {'8': array([[ 0,  9], [ 1,  5], [ 1,  6], [ 1,  7], [ 1,  8],
 						  [ 1, 10], [ 1, 11], [ 1, 12], [ 1, 13], [ 2,  4],
 						  [ 2, 14], [ 3,  3], [ 3, 15], [ 4,  2], [ 4, 16],
@@ -357,49 +360,51 @@ def DictioRangeRay(Size, RayRange):
 						  [21, 14], [22,  9]], dtype=int64)}
 
 	"""
-	y_range, x_range = np.meshgrid(np.arange(0, 6*RayRange[1]),
-								   np.arange(0, 6*RayRange[1]))
-	DispRay = {}
-	CentD = ((x_range-3*RayRange[1])**2+(y_range-3*RayRange[1])**2)**.5
+	y_range, x_range = np.meshgrid(np.arange(0, 6*ray_range[1]),
+								   np.arange(0, 6*ray_range[1]))
+
+	disp_ray = {}
+	center = ((x_range-3*ray_range[1])**2+(y_range-3*ray_range[1])**2)**.5
 	kernel = np.array([[[0, 1]], [[1, 0]], [[0, -1]], [[-1, 0]]])
-	for i in range(RayRange[0]*2, 2*RayRange[1]+1):
-		Mask = (CentD <= i+1)
+	for i in range(ray_range[0]*2, 2*ray_range[1]+1):
+		mask = (center <= i+1)
 		pf = np.argwhere(Mask == True)
 		pk = pf+kernel
-		c1 = Mask[pk[0, :, 0], pk[0, :, 1]] == False
-		c2 = Mask[pk[1, :, 0], pk[1, :, 1]] == False
-		c3 = Mask[pk[2, :, 0], pk[2, :, 1]] == False
-		c4 = Mask[pk[3, :, 0], pk[3, :, 1]] == False
-		DispRay[str(i)] = pf[c1|c2|c3|c4]-3*RayRange[1]
-	return DispRay
+		c1 = mask[pk[0, :, 0], pk[0, :, 1]] == False
+		c2 = mask[pk[1, :, 0], pk[1, :, 1]] == False
+		c3 = mask[pk[2, :, 0], pk[2, :, 1]] == False
+		c4 = mask[pk[3, :, 0], pk[3, :, 1]] == False
+		disp_ray[str(i)] = pf[c1|c2|c3|c4]-3*ray_range[1]
 
-def CompacGranular(Size, RayRange, verbose=True):
+	return disp_ray
+
+def compac_granular(size, ray_range, verbose=True):
 	"""
 	A more compact method to fill a box with circular particules of random
 	rays.
 
 	Parameters
 	----------
-	Size : int
+	size : int
 		Taille du plateau à remplire.
-	RayRange : list
+	ray_range : list
 		Limites de taille des rayons possible.
 
 	Returns
 	-------
-	Table : numpy.ndarray
+	table : numpy.ndarray
 		A square (2-dimensional) array. The state of the cells of the array
 		can be equal to 0 which mean that there are no grain on this cell. If
 		the value is equal to c, c beeing superior to 0, this mean that the
 		cell is part of the c grain.
-	Disques : numpy.ndarray
+	disques : numpy.ndarray
 		List of the disques positionned, their ray and their position.
 	Verbose : bool, optional
 		If you want that the algorithm be verbose. The default is True.
 
 	Exemple
 	-------
-	In[0] : CompacGranular(19, [4, 6])
+	In[0] : compac_granular(19, [4, 6])
 	Out[0] : array([[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 					[0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
 					[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 0, 0],
@@ -426,7 +431,7 @@ def CompacGranular(Size, RayRange, verbose=True):
 
 	Note
 	----
-	The computation time goes exponentially with the size of the Table. You
+	The computation time goes exponentially with the size of the table. You
 	should start with small model (~100) the increase the size until you are
 	satified.
 
@@ -434,54 +439,61 @@ def CompacGranular(Size, RayRange, verbose=True):
 	if verbose:
 		print('Please wait while filling the tray, this may take a few '+
 			  'moments to several tens of minutes...')
-	Disques = np.array([[]], dtype=int)
-	Stop = False
-	Table = np.zeros((Size, Size))
-	Range = RayRange[1]-RayRange[0]
+
+	disques = np.array([[]], dtype=int)
+	stop = False
+	table = np.zeros((size, size))
+	range_ = ray_range[1]-ray_range[0]
 	# To ease the caluclations
-	YY, XX = np.meshgrid(np.arange(0, Size, 1.), np.arange(0, Size, 1.))
-	DispRay = DictioRangeRay(Size, RayRange)
-	rand = np.random.randint(RayRange[0], RayRange[1]+1)
-	x, y = np.random.randint(rand, Size-rand, 2)
-	Disques = np.concatenate((Disques, np.array([[rand, x, y]])), axis=1)
-	Dist = ((XX-x)**2 +(YY-y)**2)**.5
-	Table[Dist <= rand] = 1
+	y_grid, x_grid = np.meshgrid(np.arange(0, size, 1.), np.arange(0, size, 1.))
+	grid_coord = np.array([x_grid, y_grid]).T
+	disp_ray = dictio_range_ray(size, ray_range)
+	rand = np.random.randint(ray_range[0], ray_range[1]+1)
+	x, y = np.random.randint(rand, size-rand, 2)
+	disques = np.concatenate((disques, np.array([[rand, x, y]])), axis=1)
+	dist = cdist(grid_coord, np.array([[x, y]])) # ((XX-x)**2 +(YY-y)**2)**.5
+	table[dist <= rand] = 1
 	c = 2
 	toobig = 0
 	if verbose:
 		pbar = tqdm(total=1, desc='progression')
-	while Stop != True:
-		Plug = []
-		rand = np.random.randint(RayRange[0], RayRange[1]+1-toobig)
-		# Get the possible places for all of the discs with the drawed ray
-		for i in range(len(Disques)):
-			Plus = np.copy(DispRay[str(Disques[i, 0]+rand)])
-			Plus += Disques[i, 1:]
-			Plus = Plus[(Plus[:, 0] > rand)&(Plus[:, 1] > rand)&
-						(Plus[:, 0] < Size-rand)&(Plus[:, 1] < Size-rand)]
-			Plus = Plus[Table[Plus[:, 0], Plus[:, 1]] == 0]
-			pf = np.argwhere(Table > 0)
-			Dist = ((pf[:, 0]-Plus[:, 0, np.newaxis])**2 +
-					(pf[:, 1]-Plus[:, 1, np.newaxis])**2)**.5
-			Plus = Plus[np.sum(Dist > rand, axis=1) == pf.shape[0]]
-			Plug.append(Plus)
 
-		Plug = np.concatenate(Plug)
-		if len(Plug) > 0:
+	while stop != True:
+		plug = []
+		rand = np.random.randint(ray_range[0], ray_range[1]+1-toobig)
+		# Get the possible places for all of the discs with the drawed ray
+		for i in range(len(disques)):
+			plus = np.copy(disp_ray[str(disques[i, 0]+rand)])
+			plus += disques[i, 1:]
+			plus = plus[(plus[:, 0] > rand)&(plus[:, 1] > rand)&
+						(plus[:, 0] < size-rand)&(plus[:, 1] < size-rand)]
+
+			plus = plus[table[plus[:, 0], plus[:, 1]] == 0]
+			pf = np.argwhere(table > 0)
+			#dist = ((pf[:, 0]-plus[:, 0, np.newaxis])**2 +
+			#		(pf[:, 1]-plus[:, 1, np.newaxis])**2)**.5
+			# cdist is higly more fast than self numpy implementation
+			dist = cdist(pf, plus)
+			plus = plus[np.sum(dist > rand, axis=1) == pf.shape[0]]
+			plug.append(plus)
+
+		plug = np.concatenate(plug)
+		if len(plug) > 0:
 			# To put the new disc the closest of the other discs
-			xmean, ymean = np.mean(Disques[:, 1]), np.mean(Disques[:, 2])
-			Dist = ((Plug[:, 0]-xmean)**2 +(Plug[:, 1]-ymean)**2)**.5
-			x, y = Plug[np.argmin(Dist)]
-			Disques = np.concatenate((Disques, np.array([[rand, x, y]])),
+			xmean, ymean = np.mean(disques[:, 1]), np.mean(disques[:, 2])
+			dist = ((plug[:, 0]-xmean)**2 +(plug[:, 1]-ymean)**2)**.5
+			x, y = plug[np.argmin(dist)]
+			disques = np.concatenate((disques, np.array([[rand, x, y]])),
 									 axis=0)
-			Dist = ((XX-x)**2 +(YY-y)**2)**.5
-			Table[Dist <= rand] = c
+
+			dist = cdist(grid_coord, np.array([[x, y]])) # ((XX-x)**2 +(YY-y)**2)**.5
+			table[dist <= rand] = c
 			c += 1
 
 		else:
 			toobig += 1
-			if toobig > Range:
-				Stop = True
+			if toobig > range_:
+				stop = True
 
 		if verbose:
 			pbar.update(1)
@@ -489,9 +501,9 @@ def CompacGranular(Size, RayRange, verbose=True):
 	if verbose:
 		pbar.close()
 
-	Table = Table.astype(int)
+	table = table.astype(int)
 	if verbose:
-		print('The table is filled to '+str(len(Table[Table > 0])/Size**2*100)+
-		  '%. There is/are '+str(len(Disques))+' grains.')
+		print('The table is filled to '+str(len(table[table > 0])/size**2*100)+
+		  '%. There is/are '+str(len(disques))+' grains.')
 
-	return Table, Disques
+	return table, disques
