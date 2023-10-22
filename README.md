@@ -24,35 +24,35 @@ a3, b3 = compac_granular(1000, [50, 400], verbose=True)
 
 show_box(a1, b1)
 
-![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_uniform.png)
+![Exemple picture](img/randFill_s1000_rr_50_400_rp_0,005_uniform.png)
 
 repart_grains(b1)
 
-![Exemple picture](GrainsDistri_s1000_rr_50_400_rp_0,005_uniform.png)
+![Exemple picture](img/GrainsDistri_s1000_rr_50_400_rp_0,005_uniform.png)
 
 show_trying(c1)
 
-![Exemple picture](Trying_s1000_rr_50_400_rp_0,005_uniform.png)
+![Exemple picture](img/Trying_s1000_rr_50_400_rp_0,005_uniform.png)
 
 
 show_box(a2, b2)
 
-![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_lrqc.png)
+![Exemple picture](img/randFill_s1000_rr_50_400_rp_0,005_lrqc.png)
 
 repart_grains(b2)
 
-![Exemple picture](GrainsDistri_s1000_rr_50_400_rp_0,005_lrqc.png)
+![Exemple picture](img/GrainsDistri_s1000_rr_50_400_rp_0,005_lrqc.png)
 
 show_trying(c2)
 
-![Exemple picture](Trying_s1000_rr_50_400_rp_0,005_lrqc.png)
+![Exemple picture](img/Trying_s1000_rr_50_400_rp_0,005_lrqc.png)
 
 
 
 show_box(a3, b3)
 
-![Exemple picture](randFill_s1000_rr_50_400_rp_0,005_compact.png)
+![Exemple picture](img/randFill_s1000_rr_50_400_rp_0,005_compact.png)
 
 repart_grains(b3)
 
-![Exemple picture](GrainsDistri_s1000_rr_50_400_compact.png)
+![Exemple picture](img/GrainsDistri_s1000_rr_50_400_compact.png)
