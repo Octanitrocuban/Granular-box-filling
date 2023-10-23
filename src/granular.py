@@ -150,7 +150,7 @@ def granular_filling(size, ray_range, ratio, method, verbose=True):
 	Note
 	----
 	The time cunsumption is going exponetialy with the size of the box. With
-	ray range [4, 6], it wil take ~ 0.00 s to fill a 50*50 cells box
+	ray range [4, 6], it wil take ~ xxx0.00 s to fill a 50*50 cells box
 	the ~ 50s to fill a 100*100 cells box.
 
 	"""
@@ -217,15 +217,15 @@ def granular_filling(size, ray_range, ratio, method, verbose=True):
 						   [[diag, diag]], [[-diag, diag]], [[diag, -diag]],
 						   [[-diag, -diag]]])
 
-		Projec = psz+kernel
-		cond1 = plate[Projec[0, :, 0], Projec[0, :, 1]] == 0
-		cond2 = plate[Projec[1, :, 0], Projec[1, :, 1]] == 0
-		cond3 = plate[Projec[2, :, 0], Projec[2, :, 1]] == 0
-		cond4 = plate[Projec[3, :, 0], Projec[3, :, 1]] == 0
-		cond5 = plate[Projec[4, :, 0], Projec[4, :, 1]] == 0
-		cond6 = plate[Projec[5, :, 0], Projec[5, :, 1]] == 0
-		cond7 = plate[Projec[6, :, 0], Projec[6, :, 1]] == 0
-		cond8 = plate[Projec[7, :, 0], Projec[7, :, 1]] == 0
+		projec = psz+kernel
+		cond1 = plate[projec[0, :, 0], projec[0, :, 1]] == 0
+		cond2 = plate[projec[1, :, 0], projec[1, :, 1]] == 0
+		cond3 = plate[projec[2, :, 0], projec[2, :, 1]] == 0
+		cond4 = plate[projec[3, :, 0], projec[3, :, 1]] == 0
+		cond5 = plate[projec[4, :, 0], projec[4, :, 1]] == 0
+		cond6 = plate[projec[5, :, 0], projec[5, :, 1]] == 0
+		cond7 = plate[projec[6, :, 0], projec[6, :, 1]] == 0
+		cond8 = plate[projec[7, :, 0], projec[7, :, 1]] == 0
 		psz = psz[cond1&cond2&cond3&cond4&cond5&cond6&cond7&cond8]
 		# This mean that there are at least one position where the grain can
 		# be put
