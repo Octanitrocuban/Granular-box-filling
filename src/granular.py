@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Matthieu Nougaret
+Module to randomly fill a 2d box with random particules.
 """
 
 import numpy as np
