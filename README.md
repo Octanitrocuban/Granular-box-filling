@@ -53,7 +53,7 @@ show_trying(c2)
 
 show_box(a3, b3)
 
-![Exemple picture](img/randFill_s1000_rr_50_400_rp_0,005_compact.png)
+![Exemple picture](img/randFill_s1000_rr_50_400_compact.png)
 
 repart_grains(b3)
 
