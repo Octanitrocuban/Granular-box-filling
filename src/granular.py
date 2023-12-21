@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author: Matthieu Nougaret
+Module to randomly fill a 2d box with random particules.
 """
 
 import numpy as np
@@ -150,8 +150,9 @@ def granular_filling(size, ray_range, ratio, method, verbose=True):
 	Note
 	----
 	The time cunsumption is going exponetialy with the size of the box. With
-	ray range [4, 6], it wil take ~ xxx0.00 s to fill a 50*50 cells box
-	the ~ 50s to fill a 100*100 cells box.
+	granular_filling(500, [10, 100], 0.25, 'uniform'), it wil take ~ 8.00 s
+	to fill this box. The table is filled to [70 to 80] % and there are
+	[100 to 150] grains.
 
 	"""
 	if verbose:
@@ -167,7 +168,7 @@ def granular_filling(size, ray_range, ratio, method, verbose=True):
 	# Creating all the possible coordinates
 	y_grid, x_grid = np.meshgrid(np.arange(0, size, 1.),
 								 np.arange(0, size, 1.))
-	grid_coord = np.array([x_grid, y_grid]).T
+	grid_coord = np.array([np.ravel(x_grid), np.ravel(y_grid)]).T
 	# Evolution of the ratio number of succeful trial over the total number of
 	# trial
 	tent = []
@@ -227,12 +228,15 @@ def granular_filling(size, ray_range, ratio, method, verbose=True):
 		cond7 = plate[projec[6, :, 0], projec[6, :, 1]] == 0
 		cond8 = plate[projec[7, :, 0], projec[7, :, 1]] == 0
 		psz = psz[cond1&cond2&cond3&cond4&cond5&cond6&cond7&cond8]
+
 		# This mean that there are at least one position where the grain can
 		# be put
 		if len(psz) > 0:
 			# Random position
 			x, y = psz[np.random.randint(len(psz))]
-			dist = cdist(grid_coord, np.array([[x, y]])) # ((Xx-x)**2+(Yy-y)**2)**.5
+			dist = np.reshape(cdist(grid_coord, np.array([[x, y]])),
+								 (size, size))
+
 			# This mean that the random position is available
 			if np.sum(plate[dist <= ray]) == 0:
 				plate[dist <= ray] = c
@@ -431,8 +435,8 @@ def compac_granular(size, ray_range, verbose=True):
 	Note
 	----
 	The computation time goes exponentially with the size of the table. You
-	should start with small model (~100) the increase the size until you are
-	satified.
+	should start with small model (size=500, ray_range=[10, 100]) then
+	increase the size until you are satified.
 
 	"""
 	if verbose:
@@ -490,7 +494,8 @@ def compac_granular(size, ray_range, verbose=True):
 									 axis=0)
 
 			dist = np.reshape(cdist(grid_coord, np.array([[x, y]])),
-								 (size, size)) # ((XX-x)**2 +(YY-y)**2)**.5
+								 (size, size))
+
 			table[dist <= rand] = c
 			c += 1
 
