@@ -22,6 +22,8 @@ a2, b2, c2 = granular_filling(1000, [50, 400], 0.005, 'lrqc', verbose=True)
 
 a3, b3 = compac_granular(1000, [50, 400], verbose=True)
 
+a4, b4 = compac_granular(500, [10, 12], verbose=True)
+
 show_box(a1, b1)
 
 ![Exemple picture](img/randFill_s1000_rr_50_400_rp_0,005_uniform.png)
@@ -56,3 +58,11 @@ show_box(a3, b3)
 repart_grains(b3)
 
 ![Exemple picture](img/GrainsDistri_s1000_rr_50_400_compact.png)
+
+show_box(a4, b4)
+
+![Exemple picture](img/randFill_s500_rr_10_12_compact.png)
+
+repart_grains(b4)
+
+![Exemple picture](img/GrainsDistri_s500_rr_10_12_compact.png)
