@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Module to randomly fill a 2d box with random particules.
+@author: Matthieu Nougaret
 """
 
 import numpy as np
@@ -368,7 +368,7 @@ def dictio_range_ray(size, ray_range):
 	kernel = np.array([[[0, 1]], [[1, 0]], [[0, -1]], [[-1, 0]]])
 	for i in range(ray_range[0]*2, 2*ray_range[1]+1):
 		mask = (center <= i+1)
-		pf = np.argwhere(Mask == True)
+		pf = np.argwhere(mask == True)
 		pk = pf+kernel
 		c1 = mask[pk[0, :, 0], pk[0, :, 1]] == False
 		c2 = mask[pk[1, :, 0], pk[1, :, 1]] == False
@@ -405,28 +405,27 @@ def compac_granular(size, ray_range, verbose=True):
 	Exemple
 	-------
 	In[0] : compac_granular(19, [4, 6])
-	Out[0] : array([[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-					[0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-					[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 0, 0],
-					[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0],
-					[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 0],
-					[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-					[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0],
-					[0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 0],
-					[0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0],
-					[0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 4, 0, 0, 0, 0],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 4, 4, 4, 4, 4, 0, 0],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
-					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 0],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
-					[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
-					[0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0],
-					[0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0]]),
-			 array([[ 4,  4,  6],
-					[ 5, 13,  5],
-					[ 4,  5, 14],
+	Out[0] : array([
+		[0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+		[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 0, 0],
+		[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0],
+		[0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 0],
+		[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+		[0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 3, 3, 3, 3, 3, 3, 3, 0],
+		[0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 3, 3, 3, 3, 3, 3, 3, 0],
+		[0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 3, 3, 3, 3, 3, 0, 0],
+		[0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 4, 0, 0, 0, 0],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 0, 4, 4, 4, 4, 4, 0, 0],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
+		[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 0],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
+		[0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 4, 4, 4, 4, 4, 4, 4, 0],
+		[0, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 0, 4, 4, 4, 4, 4, 0, 0],
+		[0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0]]),
+			 array([[ 4,  4,  6], [ 5, 13,  5], [ 4,  5, 14],
 					[ 4, 14, 14]], dtype=int64))
 
 	Note
@@ -438,7 +437,7 @@ def compac_granular(size, ray_range, verbose=True):
 	"""
 	if verbose:
 		print('Please wait while filling the tray, this may take a few '+
-			  'moments to several tens of minutes...')
+			  'moments to several tens of minutes...\n')
 
 	disques = np.array([[]], dtype=int)
 	stop = False
@@ -446,15 +445,17 @@ def compac_granular(size, ray_range, verbose=True):
 	range_ = ray_range[1]-ray_range[0]
 	# To ease the caluclations
 	y_grid, x_grid = np.meshgrid(np.arange(0, size, 1.), np.arange(0, size, 1.))
-	grid_coord = np.array([x_grid, y_grid]).T
+	grid_coord = np.array([np.ravel(x_grid), np.ravel(y_grid)]).T
 	disp_ray = dictio_range_ray(size, ray_range)
 	rand = np.random.randint(ray_range[0], ray_range[1]+1)
 	x, y = np.random.randint(rand, size-rand, 2)
 	disques = np.concatenate((disques, np.array([[rand, x, y]])), axis=1)
 	dist = cdist(grid_coord, np.array([[x, y]])) # ((XX-x)**2 +(YY-y)**2)**.5
+	dist = np.reshape(dist, (size, size))
 	table[dist <= rand] = 1
 	c = 2
 	toobig = 0
+
 	if verbose:
 		pbar = tqdm(total=1, desc='progression')
 
@@ -463,30 +464,33 @@ def compac_granular(size, ray_range, verbose=True):
 		rand = np.random.randint(ray_range[0], ray_range[1]+1-toobig)
 		# Get the possible places for all of the discs with the drawed ray
 		for i in range(len(disques)):
+			# positions for the i-th circle with the random ray
 			plus = np.copy(disp_ray[str(disques[i, 0]+rand)])
+			# center on the i-th disc position
 			plus += disques[i, 1:]
-			plus = plus[(plus[:, 0] > rand)&(plus[:, 1] > rand)&
-						(plus[:, 0] < size-rand)&(plus[:, 1] < size-rand)]
+			# keep positions that are in the box
+			plus = plus[(plus[:, 0] > rand)&(plus[:, 1] > rand)&(
+						plus[:, 0] < (size-rand))&(plus[:, 1] < (size-rand))]
 
+			# keep position on zeros-value cell
 			plus = plus[table[plus[:, 0], plus[:, 1]] == 0]
-			pf = np.argwhere(table > 0)
-			#dist = ((pf[:, 0]-plus[:, 0, np.newaxis])**2 +
-			#		(pf[:, 1]-plus[:, 1, np.newaxis])**2)**.5
-			# cdist is higly more fast than self numpy implementation
-			dist = cdist(pf, plus)
-			plus = plus[np.sum(dist > rand, axis=1) == pf.shape[0]]
+			# calculate the distances to the center of the disques
+			dist = cdist(disques[:, 1:], plus)-disques[:, :1]
+			plus = plus[np.sum(dist > rand, axis=0) == disques.shape[0]]
 			plug.append(plus)
 
 		plug = np.concatenate(plug)
 		if len(plug) > 0:
 			# To put the new disc the closest of the other discs
 			xmean, ymean = np.mean(disques[:, 1]), np.mean(disques[:, 2])
+			
 			dist = ((plug[:, 0]-xmean)**2 +(plug[:, 1]-ymean)**2)**.5
 			x, y = plug[np.argmin(dist)]
 			disques = np.concatenate((disques, np.array([[rand, x, y]])),
 									 axis=0)
 
-			dist = cdist(grid_coord, np.array([[x, y]])) # ((XX-x)**2 +(YY-y)**2)**.5
+			dist = np.reshape(cdist(grid_coord, np.array([[x, y]])),
+								 (size, size)) # ((XX-x)**2 +(YY-y)**2)**.5
 			table[dist <= rand] = c
 			c += 1
 
@@ -503,7 +507,7 @@ def compac_granular(size, ray_range, verbose=True):
 
 	table = table.astype(int)
 	if verbose:
-		print('The table is filled to '+str(len(table[table > 0])/size**2*100)+
+		print('\nThe table is filled to '+str(len(table[table > 0])/size**2*100)+
 		  '%. There is/are '+str(len(disques))+' grains.')
 
 	return table, disques
